@@ -1,0 +1,6 @@
+﻿services:
+  expensetrackerapp.webapi:
+    image: expensetrackerapp:build
+    restart: always
+
+

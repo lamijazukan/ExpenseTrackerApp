@@ -7,7 +7,7 @@ CREATE TABLE Users (
     Email VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(100) NOT NULL,
     CreatedAt TIMESTAMP DEFAULT NOW(),
-    Preferences JSONB,
+    Preferences JSONB
 );
 
 -- Table: Store
@@ -129,8 +129,8 @@ CREATE TABLE Notification (
 -- Sample Data Insertion
 
 INSERT INTO Users (UserID, Username, Email, Password, Preferences) VALUES
-('550e8400-e29b-41d4-a716-446655440001','john_doe', 'john.doe@email.com', 'StrongPassword123##@', '{"language": "bs", "currency": "BAM"}'),
-('550e8400-e29b-41d4-a716-446655440002','jane_smith', 'jane.smith@email.com', 'Password123!=#', '{"language": "en", "currency": "USD"}'),
+('550e8400-e29b-41d4-a716-446655440001', 'john_doe', 'john.doe@email.com', 'StrongPassword123##@', '{"language": "bs", "currency": "BAM"}'),
+('550e8400-e29b-41d4-a716-446655440002', 'jane_smith', 'jane.smith@email.com', 'Password123!=#', '{"language": "en", "currency": "USD"}'),
 ('550e8400-e29b-41d4-a716-446655440003', 'mike_wilson', 'mike.wilson@email.com', '123myPassword$%#', '{"language": "bs", "currency": "BAM"}');
 
 -- Insert Stores

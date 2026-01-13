@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ExpenseTrackerApp.Application.MessageHistory;
-using ExpenseTrackerApp.Infrastructure.MessageHistory;
-using ExpenseTrackerApp.Infrastructure.MessageHistory.Options;
-using ExpenseTrackerApp.WebApi.Options;
+﻿
+using ExpenseTrackerApp.Application.Users;
+using ExpenseTrackerApp.Infrastructure.Users;
+using ExpenseTrackerApp.Infrastructure.Database;
+
 
 namespace ExpenseTrackerApp.WebApi;
 
@@ -11,14 +10,22 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.TryAddMessageHistoryOptions(configuration.GetMessageHistoryOptions());
+
 
         return services
-            .AddMessageHistoryApplication();
+            .AddUsersApplication();
+
     }
     
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        return services.AddMessageHistoryInfrastructure(configuration);
+      
+        return services
+            .AddDatabase(configuration)
+            .AddUsersInfrastructure(configuration);
+         
+        
     }
 }

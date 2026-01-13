@@ -1,6 +1,11 @@
-﻿using ExpenseTrackerApp.Application;
+﻿using System.Text.Json.Serialization;
+using ExpenseTrackerApp.Application;
+using ExpenseTrackerApp.Infrastructure.Database;
 using ExpenseTrackerApp.WebApi;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Asp.Versioning;
+using ExpenseTrackerApp.WebApi.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -23,29 +28,104 @@ var builder = WebApplication.CreateBuilder(args);
     
     builder.Host.UseSerilog();
     
+    //to serialize enums as strings
+    builder.Services
+        .AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter()
+            );
+        });
+    
     builder.Services.AddControllers();
+    
+    builder.Services.AddRouting(options => 
+    {
+        options.LowercaseUrls = true;
+    });
+
+
+    // Add API Versioning
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = ApiVersionReader.Combine(
+            new UrlSegmentApiVersionReader()
+        );
+    }).AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
 
     builder.Services.AddEndpointsApiExplorer();
+    
     builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new() { Title = "API", Version = "v1" });
+        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        {
+            Title = "Expense Tracker API",
+            Version = "v1",
+            Description = "A RESTful API for managing expenses, users, and categories in an expense tracking application.",
+            Contact = new Microsoft.OpenApi.Models.OpenApiContact
+            {
+                Name = "API Support",
+                Email = "support@expensetracker.com"
+            }
+        });
+        
+        // Include XML comments
+        var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+        if (File.Exists(xmlPath))
+        {
+            c.IncludeXmlComments(xmlPath);
+        }
+        
+        // Include XML comments from referenced projects
+        var contractsXml = Path.Combine(AppContext.BaseDirectory, "SampleCkWebApp.Contracts.xml");
+        if (File.Exists(contractsXml))
+        {
+            c.IncludeXmlComments(contractsXml);
+        }
+        
+        // Use full names for better organization
+        c.CustomSchemaIds(type => type.FullName);
     });    
+    
     builder.Services
         .AddApplication(builder.Configuration)
         .AddInfrastructure(builder.Configuration);
 }
+/*AUTOMAPPER REGISTRATIONS*/
+
+builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 
 Log.Logger.Information("Application starting");
 
 var app = builder.Build();
 {
+    
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        
+        // assure DB exists and schema is up-to-date
+        db.Database.Migrate();
+
+        await DbSeeder.SeedAsync(db); 
+    }
+    
     app.UseRouting();
     
     // Save service provider to static class
     ServicePool.Create(app.Services);
 
     // Add exception handler and request logging
-    app.UseExceptionHandler("/error");
+    app.UseExceptionHandler("/errors");
     
     app.UseSerilogRequestLogging(options =>
     {
@@ -56,7 +136,17 @@ var app = builder.Build();
     });
     
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Expense Tracker API v1");
+        c.RoutePrefix = "swagger"; // Swagger UI available at /swagger
+        c.DocumentTitle = "Expense Tracker API Documentation";
+        c.DefaultModelsExpandDepth(-1); // Hide schemas by default
+        c.DisplayRequestDuration();
+        c.EnableDeepLinking();
+        c.EnableFilter();
+        c.ShowExtensions();
+    });
     
     app.MapControllers();
 }

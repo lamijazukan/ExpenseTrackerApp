@@ -1,6 +1,32 @@
-﻿services:
-  expensetrackerapp.webapi:
-    image: expensetrackerapp:build
-    restart: always
+﻿
+services:
+  webapi:
+    build:
+      context: ../../
+      dockerfile: ExpenseTrackerApp/src/ExpenseTrackerApp.WebApi/Dockerfile
+    restart: unless-stopped
+    container_name: expensetrackerapp.webapi
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      Database__ConnectionString: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    container_name: expensetrackerapp.db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - expensedb_data:/var/lib/postgresql/data
+
+volumes:
+  expensedb_data:
 
 

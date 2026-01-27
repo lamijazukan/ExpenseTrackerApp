@@ -13,17 +13,13 @@ public class UserProfile : Profile
         // Contracts → Domain (for CreateUser)
         CreateMap<UserPreferencesObject, UserPreferences>().ReverseMap();
         
-        // Domain User → API response
-        CreateMap<User, UserResponse>();
+        //
+        CreateMap<User, UserResult>();
+
+        CreateMap<UserResult, UserResponse>();
 
         // Application result → API response
         CreateMap<GetUsersResult, GetUsersResponse>();
-
-
-
-
-
-
     } 
 }
 

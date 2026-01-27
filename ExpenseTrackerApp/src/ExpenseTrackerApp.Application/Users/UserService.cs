@@ -1,3 +1,4 @@
+using AutoMapper;
 using ExpenseTrackerApp.Application.Users.Data;
 using ExpenseTrackerApp.Application.Users.Interfaces.Application;
 using ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
@@ -11,10 +12,12 @@ namespace ExpenseTrackerApp.Application.Users;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
     
     public async Task<ErrorOr<GetUsersResult>> GetUsersAsync(CancellationToken cancellationToken)
@@ -32,13 +35,17 @@ public class UserService : IUserService
         };
     }
     
-    public async Task<ErrorOr<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UserResult>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         var result = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
-        return result;
+        
+        if (result.IsError)
+            return result.Errors;
+        
+        return _mapper.Map<UserResult>(result.Value);
     }
     
-    public async Task<ErrorOr<User>> CreateUserAsync(string username, string email, string password, UserPreferences preferences, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UserResult>> CreateUserAsync(string username, string email, string password, UserPreferences preferences, CancellationToken cancellationToken)
     {
         var validationResult = UserValidator.ValidateCreateUserRequest(username, email, password, preferences);
         if (validationResult.IsError)
@@ -68,10 +75,13 @@ public class UserService : IUserService
         
       
         var createResult = await _userRepository.CreateUserAsync(user, cancellationToken);
-        return createResult;
+        if (createResult.IsError)
+            return createResult.Errors;
+        
+        return _mapper.Map<UserResult>(createResult.Value);
     }
 
-    public async Task<ErrorOr<User>> UpdateUserAsync(Guid userId, string? username, string? password,
+    public async Task<ErrorOr<UserResult>> UpdateUserAsync(Guid userId, string? username, string? password,
         UserPreferences? preferences, CancellationToken cancellationToken)
     {
         var validationResult =
@@ -109,7 +119,10 @@ public class UserService : IUserService
         user.UpdatedAt = DateTime.UtcNow;
         
         var updateResult = await _userRepository.UpdateUserAsync(user, cancellationToken);
+        
+        if (updateResult.IsError)
+            return updateResult.Errors;
 
-        return updateResult;
+        return _mapper.Map<UserResult>(updateResult.Value);
     }
 }

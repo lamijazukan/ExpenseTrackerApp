@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <Folder Include="Budgets\" />
-      <Folder Include="Categories\" />
       <Folder Include="Expenses\" />
     </ItemGroup>
 

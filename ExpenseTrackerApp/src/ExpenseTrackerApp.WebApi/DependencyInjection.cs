@@ -1,6 +1,9 @@
 ﻿
 using ExpenseTrackerApp.Application.Users;
 using ExpenseTrackerApp.Infrastructure.Users;
+using ExpenseTrackerApp.Application.Categories;
+using ExpenseTrackerApp.Infrastructure.Categories;
+
 using ExpenseTrackerApp.Infrastructure.Database;
 
 
@@ -13,7 +16,8 @@ public static class DependencyInjection
 
 
         return services
-            .AddUsersApplication();
+            .AddUsersApplication()
+            .AddCategoriesApplication();
 
     }
     
@@ -24,7 +28,8 @@ public static class DependencyInjection
       
         return services
             .AddDatabase(configuration)
-            .AddUsersInfrastructure(configuration);
+            .AddUsersInfrastructure(configuration)
+            .AddCategoriesInfrastructure(configuration);
          
         
     }

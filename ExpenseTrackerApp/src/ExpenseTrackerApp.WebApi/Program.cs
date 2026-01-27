@@ -103,6 +103,7 @@ var builder = WebApplication.CreateBuilder(args);
 /*AUTOMAPPER REGISTRATIONS*/
 
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(CategoryProfile).Assembly);
 
 Log.Logger.Information("Application starting");
 

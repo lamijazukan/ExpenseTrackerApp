@@ -1,11 +1,12 @@
 using ErrorOr;
+using ExpenseTrackerApp.Application.Users.Data;
 using ExpenseTrackerApp.Domain.Entities;
 
 namespace ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
 
 public interface IUserRepository
 {
-    Task<ErrorOr<(List<User> Users, int TotalCount)>> GetUsersAsync(CancellationToken cancellationToken);
+    Task<ErrorOr<GetUsersResult<User>>> GetUsersAsync(CancellationToken cancellationToken);
     
     Task<ErrorOr<User>> GetUserByIdAsync(Guid userId, CancellationToken cancellationToken);
     

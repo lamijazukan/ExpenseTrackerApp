@@ -20,7 +20,7 @@ public class UserService : IUserService
         _mapper = mapper;
     }
     
-    public async Task<ErrorOr<GetUsersResult>> GetUsersAsync(CancellationToken cancellationToken)
+    public async Task<ErrorOr<GetUsersResult<UserResult>>> GetUsersAsync(CancellationToken cancellationToken)
     {
         var result = await _userRepository.GetUsersAsync(cancellationToken);
         if (result.IsError)
@@ -28,9 +28,9 @@ public class UserService : IUserService
             return result.Errors;
         }
         
-        return new GetUsersResult
+        return new GetUsersResult<UserResult>
         {
-            Users = result.Value.Users,
+            Users = _mapper.Map<List<UserResult>>(result.Value.Users),
             TotalCount = result.Value.TotalCount,
         };
     }

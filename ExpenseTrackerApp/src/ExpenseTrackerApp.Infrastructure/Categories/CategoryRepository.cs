@@ -1,6 +1,8 @@
 using ErrorOr;
+using ExpenseTrackerApp.Application.Categories.Data;
 using ExpenseTrackerApp.Application.Categories.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Domain.Entities;
+using ExpenseTrackerApp.Domain.Errors;
 using ExpenseTrackerApp.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,17 +17,25 @@ public class CategoryRepository : ICategoryRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-     public async Task<ErrorOr<List<Category>>> GetCategoriesByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+     public async Task<ErrorOr<GetCategoriesResult<Category>>> GetCategoriesByUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         try
         {
-            var categories = await _context.Categories
+            var query = _context.Categories
                 .AsNoTracking()
                 .Where(c => c.UserId == userId)
-                .OrderBy(c => c.Name)
-                .ToListAsync(cancellationToken);
+                .OrderBy(c => c.Name);
+               
+            
+            var totalCount = await query.CountAsync(cancellationToken);
+            var categories = await query.ToListAsync(cancellationToken);
 
-            return categories;
+            
+            return new GetCategoriesResult<Category>
+            {
+                Categories = categories,
+                TotalCount = totalCount
+            };
         }
         catch (Exception ex)
         {
@@ -43,11 +53,11 @@ public class CategoryRepository : ICategoryRepository
                 .Include(c => c.ParentCategory)
                 .Include(c => c.ChildrenCategories)
                 .FirstOrDefaultAsync(c => c.CategoryId == categoryId && c.UserId == userId, cancellationToken);
-
-            if (category == null)
-                return Error.NotFound("Category.NotFound", "Category not found");
-
-            return category;
+            
+            
+            return category is null 
+                ? CategoryErrors.NotFound
+                : category;
         }
         catch (Exception ex)
         {

@@ -1,11 +1,12 @@
 using ErrorOr;
+using ExpenseTrackerApp.Application.Categories.Data;
 using ExpenseTrackerApp.Domain.Entities;
 
 namespace ExpenseTrackerApp.Application.Categories.Interfaces.Infrastructure;
 
 public interface ICategoryRepository
 {
-    Task<ErrorOr<List<Category>>> GetCategoriesByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+    Task<ErrorOr<GetCategoriesResult<Category>>> GetCategoriesByUserIdAsync(Guid userId, CancellationToken cancellationToken);
     
     Task<ErrorOr<Category>> GetCategoryByIdAsync(int categoryId, Guid userId, CancellationToken cancellationToken);
     

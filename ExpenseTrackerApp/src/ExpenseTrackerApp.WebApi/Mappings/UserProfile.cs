@@ -19,7 +19,7 @@ public class UserProfile : Profile
         CreateMap<UserResult, UserResponse>();
 
         // Application result → API response
-        CreateMap<GetUsersResult, GetUsersResponse>();
+        CreateMap<GetUsersResult<UserResult>, GetUsersResponse>();
     } 
 }
 

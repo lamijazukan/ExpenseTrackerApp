@@ -457,3 +457,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 .env
+/.idea/.idea.ExpenseTrackerApp/.idea/vcs.xml

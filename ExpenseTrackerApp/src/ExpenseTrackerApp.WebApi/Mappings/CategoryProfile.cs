@@ -13,7 +13,7 @@ public class CategoryProfile : Profile
         
         CreateMap<CategoryResult, CategoryResponse>();
 
-        CreateMap<GetCategoriesResult, GetCategoriesResponse>();
+        CreateMap<GetCategoriesResult<CategoryResult>, GetCategoriesResponse>();
         
     }
 }

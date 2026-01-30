@@ -7,6 +7,7 @@ using ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Domain.Entities;
 using ExpenseTrackerApp.Domain.Errors;
 
+
 namespace ExpenseTrackerApp.Application.Categories;
 
 public class CategoryService : ICategoryService
@@ -22,7 +23,7 @@ public class CategoryService : ICategoryService
       _currentUser = currentUser;
    }
    
-   public async Task<ErrorOr<GetCategoriesResult>> GetCategoriesAsync(CancellationToken cancellationToken)
+   public async Task<ErrorOr<GetCategoriesResult<CategoryResult>>> GetCategoriesAsync(CancellationToken cancellationToken)
    {
       var userId = _currentUser.UserId;
       var result = await _categoryRepository.GetCategoriesByUserIdAsync(userId, cancellationToken);
@@ -32,11 +33,12 @@ public class CategoryService : ICategoryService
          return result.Errors;
       }
       
-      var categories = _mapper.Map<List<CategoryResult>>(result.Value);
+     
 
-      return new GetCategoriesResult
+      return new GetCategoriesResult<CategoryResult>
       {
-         Categories = categories
+         Categories = _mapper.Map<List<CategoryResult>>(result.Value.Categories),
+         TotalCount = result.Value.TotalCount,
       };
    }
    
@@ -48,7 +50,7 @@ public class CategoryService : ICategoryService
       if (result.IsError)
          return result.Errors;
 
-      var categories = result.Value;
+      var categories = result.Value.Categories;
 
       // Build tree
       var lookup = categories.ToLookup(c => c.ParentCategoryId);
@@ -104,7 +106,7 @@ public class CategoryService : ICategoryService
       if (siblingsResult.IsError)
          return siblingsResult.Errors;
 
-      var siblings = siblingsResult.Value
+      var siblings = siblingsResult.Value.Categories
          .Where(c => c.ParentCategoryId == parentCategoryId)
          .ToList();
 
@@ -160,7 +162,7 @@ public class CategoryService : ICategoryService
       if (siblingsResult.IsError)
          return siblingsResult.Errors;
 
-      var siblings = siblingsResult.Value
+      var siblings = siblingsResult.Value.Categories
          .Where(c => c.ParentCategoryId == parentCategoryId && c.CategoryId != categoryId)
          .ToList();
 

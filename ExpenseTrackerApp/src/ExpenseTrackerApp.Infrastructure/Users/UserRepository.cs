@@ -1,4 +1,5 @@
 using ErrorOr;
+using ExpenseTrackerApp.Application.Users.Data;
 using Microsoft.EntityFrameworkCore;
 using ExpenseTrackerApp.Domain.Entities;
 using ExpenseTrackerApp.Domain.Errors;
@@ -18,7 +19,7 @@ public  class UserRepository : IUserRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    public async Task<ErrorOr<(List<User> Users, int TotalCount)>> GetUsersAsync(CancellationToken cancellationToken)
+    public async Task<ErrorOr<GetUsersResult<User>>> GetUsersAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -29,7 +30,11 @@ public  class UserRepository : IUserRepository
             var totalCount = await query.CountAsync(cancellationToken);
             var users = await query.ToListAsync(cancellationToken);
 
-            return (users, totalCount);
+            return new GetUsersResult<User>
+            {
+                TotalCount = totalCount,
+                Users = users
+            };
         }
         catch (Exception ex)
         {

@@ -7,7 +7,7 @@ namespace ExpenseTrackerApp.Application.Categories.Interfaces.Application;
 
 public interface ICategoryService
 {
-  Task<ErrorOr<GetCategoriesResult>> GetCategoriesAsync(CancellationToken cancellationToken);
+  Task<ErrorOr<GetCategoriesResult<CategoryResult>>> GetCategoriesAsync(CancellationToken cancellationToken);
 
   Task<ErrorOr<List<CategoryTreeResult>>> GetCategoryTreeAsync(CancellationToken cancellationToken);
 

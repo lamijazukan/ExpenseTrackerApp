@@ -16,6 +16,12 @@ public class BudgetConfiguration : IEntityTypeConfiguration<Budget>
             .HasPrecision(12, 2)
             .IsRequired();
 
+        builder.Property(b => b.StartDate)
+            .IsRequired();
+        
+        builder.Property(b => b.EndDate)
+            .IsRequired();
+        
         builder.HasOne(b => b.User)
             .WithMany()
             .HasForeignKey(b => b.UserId)

@@ -17,8 +17,8 @@ namespace ExpenseTrackerApp.Infrastructure.EntityConfigurations
                 .HasDefaultValueSql("gen_random_uuid()"); // PostgreSQL UUID default
 
             builder.Property(u => u.Username)
-                .IsRequired()
-                .HasMaxLength(15);
+                .HasMaxLength(15)
+                .IsRequired();
 
             builder.HasIndex(u => u.Username)
                 .IsUnique();

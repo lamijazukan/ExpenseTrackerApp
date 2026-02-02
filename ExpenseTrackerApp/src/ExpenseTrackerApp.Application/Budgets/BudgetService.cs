@@ -5,6 +5,7 @@ using ExpenseTrackerApp.Application.Budgets.Interfaces.Application;
 using ExpenseTrackerApp.Application.Budgets.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Domain.Entities;
+using ExpenseTrackerApp.Domain.Errors;
 
 namespace ExpenseTrackerApp.Application.Budgets;
 
@@ -73,6 +74,22 @@ public class BudgetService: IBudgetService
             return validation.Errors;
         
         var userId = _currentUser.UserId;
+        
+        
+        var existingBudget = await _budgetRepository.GetBudgetByCategoryIdAsync(userId, categoryId, cancellationToken);
+
+        if (!existingBudget.IsError)
+        {
+            if (existingBudget.Value.StartDate == startDate && existingBudget.Value.EndDate == endDate)
+            {
+                return BudgetErrors.BudgetAlreadyExistsForCategory;
+            }
+
+            if (existingBudget.Value.StartDate <= endDate && existingBudget.Value.EndDate >= startDate)
+            {
+                return BudgetErrors.BudgetOverlapsExisting;
+            }
+        }
 
         var budget = new Budget
         {
@@ -111,22 +128,41 @@ public class BudgetService: IBudgetService
         }
         
         var budget = budgetResult.Value;
+        
+        var newStartDate = startDate ?? budget.StartDate;
+        var newEndDate = endDate ?? budget.EndDate;
 
+        var existingBudget =
+            await _budgetRepository.GetBudgetByCategoryIdAsync(
+                userId,
+                budget.CategoryId,
+                cancellationToken);
+
+        if (!existingBudget.IsError)
+        {
+         
+
+            // Ignore the same budget
+            if (existingBudget.Value.BudgetId != budgetId)
+            {
+                if (newStartDate <= existingBudget.Value.EndDate &&
+                    newEndDate >= existingBudget.Value.StartDate)
+                {
+                    return BudgetErrors.BudgetOverlapsExisting;
+                }
+            }
+        }
+        
         if (amount is not null)
         {
             //here left value is non-nullable, nullable cannot be directly assigned so use .Value to unwrap it
             budget.Amount = amount.Value;
         }
-
-        if (startDate is not null)
-        {
-            budget.StartDate = startDate.Value;
-        }
-
-        if (endDate is not null)
-        {
-            budget.EndDate = endDate.Value;
-        }
+        
+        budget.StartDate = newStartDate;
+            
+        budget.EndDate = newEndDate;
+        
         
         
         var result = await _budgetRepository.UpdateBudgetAsync(budget, cancellationToken);

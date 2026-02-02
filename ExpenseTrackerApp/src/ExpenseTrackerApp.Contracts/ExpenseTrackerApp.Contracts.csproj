@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Budgets\" />
       <Folder Include="Expenses\" />
     </ItemGroup>
 

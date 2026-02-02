@@ -75,14 +75,11 @@ public class CategoryService : ICategoryService
       var result = await _categoryRepository.GetCategoryByIdAsync(categoryId, userId, cancellationToken);
 
       if (result.IsError)
+      {
          return result.Errors;
-
-      var category = _mapper.Map<CategoryResult>(result.Value);
-      if (category == null)
-         return CategoryErrors.NotFound;
-
+      }
       
-      return category;
+      return _mapper.Map<CategoryResult>(result.Value);
    }
    
    public async Task<ErrorOr<CategoryResult>> CreateCategoryAsync(string name, int? parentCategoryId, CancellationToken cancellationToken)
@@ -128,8 +125,7 @@ public class CategoryService : ICategoryService
       if (createResult.IsError)
          return createResult.Errors;
       
-      var result = _mapper.Map<CategoryResult>(createResult.Value);
-      return result;
+      return  _mapper.Map<CategoryResult>(createResult.Value);
    }
    
    public async Task<ErrorOr<CategoryResult>> UpdateCategoryAsync(int categoryId, string? name, int? parentCategoryId, CancellationToken cancellationToken)

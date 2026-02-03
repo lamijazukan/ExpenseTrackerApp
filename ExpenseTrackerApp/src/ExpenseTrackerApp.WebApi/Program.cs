@@ -105,6 +105,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(CategoryProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(BudgetProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(TransactionProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(ExpenseProfile).Assembly);
 
 Log.Logger.Information("Application starting");
 

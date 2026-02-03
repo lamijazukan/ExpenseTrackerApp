@@ -3,10 +3,14 @@ using ExpenseTrackerApp.Application.Budgets;
 using ExpenseTrackerApp.Application.Users;
 using ExpenseTrackerApp.Infrastructure.Users;
 using ExpenseTrackerApp.Application.Categories;
+using ExpenseTrackerApp.Application.Expenses;
+using ExpenseTrackerApp.Application.Transactions;
 using ExpenseTrackerApp.Infrastructure.Budgets;
 using ExpenseTrackerApp.Infrastructure.Categories;
 
 using ExpenseTrackerApp.Infrastructure.Database;
+using ExpenseTrackerApp.Infrastructure.Expenses;
+using ExpenseTrackerApp.Infrastructure.Transactions;
 
 
 namespace ExpenseTrackerApp.WebApi;
@@ -20,7 +24,9 @@ public static class DependencyInjection
         return services
             .AddUsersApplication()
             .AddCategoriesApplication()
-            .AddBudgetsApplication();
+            .AddBudgetsApplication()
+            .AddTransactionsApplication()
+            .AddExpensesApplication();
 
     }
     
@@ -33,7 +39,9 @@ public static class DependencyInjection
             .AddDatabase(configuration)
             .AddUsersInfrastructure(configuration)
             .AddCategoriesInfrastructure(configuration)
-            .AddBudgetsInfrastructure(configuration);
+            .AddBudgetsInfrastructure(configuration)
+            .AddTransactionInfrastructure(configuration)
+            .AddExpensesInfrastructure(configuration);
          
         
     }

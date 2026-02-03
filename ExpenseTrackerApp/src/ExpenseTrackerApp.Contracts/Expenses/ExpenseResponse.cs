@@ -10,5 +10,5 @@ public class ExpenseResponse
     
     public decimal Amount { get; set; }
     
-    public string ProductName { get; set; } = string.Empty;
+    public string ProductName { get; set; }
 }

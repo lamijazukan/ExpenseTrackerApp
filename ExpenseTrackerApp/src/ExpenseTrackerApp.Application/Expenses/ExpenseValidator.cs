@@ -19,8 +19,8 @@ public class ExpenseValidator
     }
 
     public static ErrorOr<Success> ValidateUpdateExpense(
-        decimal? amount = null,
-        string? productName = null)
+        decimal? amount,
+        string? productName)
     {
         if (amount is not null && amount <= 0)
             return ExpenseErrors.AmountMustBePositive;

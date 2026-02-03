@@ -75,6 +75,11 @@ public class TransactionService : ITransactionService
     public async Task<ErrorOr<TransactionResult>> UpdateTransactionAsync(int transactionId, DateOnly? paidDate, string? store, decimal? totalAmount, string? paymentMethod, CancellationToken cancellationToken)
     {
         var userId = _currentUser.UserId;
+        
+        var validation = TransactionValidator.ValidateUpdateTransaction(paidDate, store, totalAmount, paymentMethod);
+        if (validation.IsError)
+            return validation.Errors;
+
         var transactionResult = await _transactionRepository.GetTransactionByIdAsync(userId, transactionId, cancellationToken);
 
         if (transactionResult.IsError)
@@ -82,15 +87,27 @@ public class TransactionService : ITransactionService
 
         var transaction = transactionResult.Value;
 
-        var validation = TransactionValidator.ValidateUpdateTransaction(paidDate, store, totalAmount, paymentMethod);
-        if (validation.IsError)
-            return validation.Errors;
-
+       
         // Apply updates only if provided
-        if (paidDate.HasValue) transaction.PaidDate = paidDate.Value;
-        if (!string.IsNullOrWhiteSpace(store)) transaction.Store = store;
-        if (totalAmount.HasValue) transaction.TotalAmount = totalAmount.Value;
-        if (!string.IsNullOrWhiteSpace(paymentMethod)) transaction.PaymentMethod = paymentMethod;
+        if (paidDate is not null)
+        {
+            transaction.PaidDate = paidDate.Value;
+        }
+
+        if (store is not null)
+        {
+            transaction.Store = store;
+        }
+
+        if (totalAmount is not null)
+        {
+            transaction.TotalAmount = totalAmount.Value;
+        }
+
+        if (paymentMethod is not null)
+        {
+            transaction.PaymentMethod = paymentMethod;
+        }
 
         var updated = await _transactionRepository.UpdateTransactionAsync(transaction, cancellationToken);
 

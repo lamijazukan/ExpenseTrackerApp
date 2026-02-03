@@ -4,7 +4,7 @@ public class CreateTransactionRequest
 {
     public DateOnly PaidDate { get; set; }
     
-    public string Store { get; set; } = string.Empty;
+    public string Store { get; set; } 
     
     public decimal TotalAmount { get; set; }
  

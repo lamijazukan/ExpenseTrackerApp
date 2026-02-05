@@ -104,4 +104,60 @@ public class ExpenseRepository : IExpenseRepository
             return Error.Failure("Database.Error", $"Failed to delete expense: {ex.Message}");
         }
     }
+    
+    //for statistics purposes
+    
+    public async Task<ErrorOr<decimal>> GetTotalExpensesForBudgetPeriodAsync(
+        Guid userId,
+        int categoryId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var total = await _context.Expenses
+                .AsNoTracking()
+                .Where(e =>
+                    e.CategoryId == categoryId &&
+                    e.Transaction.UserId == userId &&
+                    e.Transaction.PaidDate >= startDate &&
+                    e.Transaction.PaidDate <= endDate)
+                .SumAsync(e => e.Amount, cancellationToken);
+
+            return total;
+        }
+        catch (Exception ex)
+        {
+            return Error.Failure(
+                "Database.Error",
+                $"Failed to calculate total expenses for budget period: {ex.Message}");
+        }
+    }
+
+    public async Task<ErrorOr<decimal>> GetTotalExpensesForMonthAsync(
+        Guid userId,
+        int year,
+        int month,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var total = await _context.Expenses
+                .AsNoTracking()
+                .Where(e =>
+                    e.Transaction.UserId == userId &&
+                    e.Transaction.PaidDate.Year == year &&
+                    e.Transaction.PaidDate.Month == month)
+                .SumAsync(e => e.Amount, cancellationToken);
+
+            return total;
+        }
+        catch (Exception ex)
+        {
+            return Error.Failure(
+                "Database.Error",
+                $"Failed to calculate monthly expenses: {ex.Message}");
+        }
+    }
 }

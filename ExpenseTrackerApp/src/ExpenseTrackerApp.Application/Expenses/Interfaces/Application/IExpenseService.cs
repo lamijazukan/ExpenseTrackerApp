@@ -25,4 +25,6 @@ public interface IExpenseService
         CancellationToken cancellationToken);
 
     Task<ErrorOr<Success>> DeleteExpenseAsync(int expenseId, CancellationToken cancellationToken);
+    
+    
 }

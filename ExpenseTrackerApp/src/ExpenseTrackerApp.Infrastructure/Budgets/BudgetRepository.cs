@@ -138,6 +138,36 @@ public class BudgetRepository: IBudgetRepository
             return Error.Failure("Database.Error", $"Failed to get budget by category: {ex.Message}");
         }
     }
+    
+    public async Task<ErrorOr<decimal>> GetTotalBudgetForMonthAsync(
+        Guid userId,
+        int year,
+        int month,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var monthStart = new DateOnly(year, month, 1);
+            var monthEnd = monthStart.AddMonths(1).AddDays(-1);
+
+            var totalBudget = await _context.Budgets
+                .AsNoTracking()
+                .Where(b =>
+                    b.UserId == userId &&
+                    b.StartDate <= monthEnd &&   // budget starts before month ends
+                    b.EndDate >= monthStart)     // budget ends after month starts
+                .SumAsync(b => b.Amount, cancellationToken);
+
+            return totalBudget;
+        }
+        catch (Exception ex)
+        {
+            return Error.Failure(
+                "Database.Error",
+                $"Failed to calculate total monthly budgets: {ex.Message}");
+        }
+    }
+
 
     
 }

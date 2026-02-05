@@ -4,11 +4,13 @@ using ExpenseTrackerApp.Application.Users;
 using ExpenseTrackerApp.Infrastructure.Users;
 using ExpenseTrackerApp.Application.Categories;
 using ExpenseTrackerApp.Application.Expenses;
+using ExpenseTrackerApp.Application.Statistics;
 using ExpenseTrackerApp.Application.Transactions;
 using ExpenseTrackerApp.Infrastructure.Budgets;
 using ExpenseTrackerApp.Infrastructure.Categories;
 
 using ExpenseTrackerApp.Infrastructure.Database;
+using ExpenseTrackerApp.Infrastructure.DomainEventDispatcher;
 using ExpenseTrackerApp.Infrastructure.Expenses;
 using ExpenseTrackerApp.Infrastructure.Transactions;
 
@@ -26,7 +28,8 @@ public static class DependencyInjection
             .AddCategoriesApplication()
             .AddBudgetsApplication()
             .AddTransactionsApplication()
-            .AddExpensesApplication();
+            .AddExpensesApplication()
+            .AddStatisticsApplication();
 
     }
     
@@ -41,7 +44,8 @@ public static class DependencyInjection
             .AddCategoriesInfrastructure(configuration)
             .AddBudgetsInfrastructure(configuration)
             .AddTransactionInfrastructure(configuration)
-            .AddExpensesInfrastructure(configuration);
+            .AddExpensesInfrastructure(configuration)
+            .AddDomainEventsInfrastructure(configuration);
          
         
     }

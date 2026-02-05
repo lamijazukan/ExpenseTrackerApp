@@ -1,6 +1,6 @@
-namespace ExpenseTrackerApp.Application.Budgets.Data;
+namespace ExpenseTrackerApp.Domain.Models;
 
-public class BudgetStatusResult
+public class BudgetStatus
 {
     public decimal TotalAmount { get; init; }
     public decimal SpentAmount { get; init; }

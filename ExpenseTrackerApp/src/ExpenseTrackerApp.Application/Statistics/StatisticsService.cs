@@ -130,15 +130,27 @@ public class StatisticsService: IStatisticService
         if (expensesResult.IsError)
             return expensesResult.Errors;
 
-        decimal income = 0m; // later IncomeRepository
+        var budgetResult =
+            await _budgetRepository.GetTotalBudgetForMonthAsync(
+                userId,
+                year,
+                month,
+                cancellationToken);
+
+        if (budgetResult.IsError)
+            return budgetResult.Errors;
+
+        var totalExpenses = expensesResult.Value;
+        var totalBudget = budgetResult.Value;
 
         return new MonthlySavingsResult
         {
             Year = year,
             Month = month,
-            Income = income,
-            Expenses = expensesResult.Value,
-            Savings = income - expensesResult.Value
+            BudgetBalance = totalBudget,    
+            Expenses = totalExpenses,
+            Savings = totalBudget - totalExpenses
         };
     }
+
 }

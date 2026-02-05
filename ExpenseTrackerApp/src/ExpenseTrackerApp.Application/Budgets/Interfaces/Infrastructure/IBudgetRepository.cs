@@ -10,14 +10,16 @@ public interface IBudgetRepository
     
     Task<ErrorOr<Budget>> GetBudgetByIdAsync(Guid userId, int budgetId, CancellationToken cancellationToken);
     
-    //for statistics later
-    
-    Task<ErrorOr<Budget>> GetBudgetByCategoryIdAsync(Guid userId, int categoryId, CancellationToken cancellationToken);
-    
     Task<ErrorOr<Budget>> CreateBudgetAsync(Budget budget, CancellationToken cancellationToken);
     
     Task<ErrorOr<Budget>> UpdateBudgetAsync(Budget budget, CancellationToken cancellationToken);
     
     Task<ErrorOr<Success>> DeleteBudgetAsync(Budget budget, CancellationToken cancellationToken);
+    
+    //for statistics later
+    
+    Task<ErrorOr<Budget>> GetBudgetByCategoryIdAsync(Guid userId, int categoryId, CancellationToken cancellationToken);
+    
+    Task<ErrorOr<decimal>> GetTotalBudgetForMonthAsync( Guid userId, int year, int month, CancellationToken cancellationToken);
     
 }

@@ -20,4 +20,19 @@ public interface IExpenseRepository
 
     Task<ErrorOr<Success>> DeleteExpenseAsync(
         Expense expense, CancellationToken cancellationToken);
+    
+    //for statistics purposes
+    
+    Task<ErrorOr<decimal>> GetTotalExpensesForBudgetPeriodAsync(
+        Guid userId,
+        int categoryId,
+        DateOnly startDate,
+        DateOnly endDate,
+        CancellationToken cancellationToken);
+
+    Task<ErrorOr<decimal>> GetTotalExpensesForMonthAsync(
+        Guid userId,
+        int year,
+        int month,
+        CancellationToken cancellationToken);
 }

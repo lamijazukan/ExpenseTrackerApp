@@ -1,10 +1,12 @@
 using AutoMapper;
 using ExpenseTrackerApp.Application.Expenses.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.Expenses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerApp.WebApi.Controllers.Expenses;
 
+[Authorize]
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]

@@ -7,8 +7,7 @@ namespace ExpenseTrackerApp.Application.Users;
 
 public class UserValidator
 {
-    public static ErrorOr<Success> ValidateCreateUserRequest(string name, string email, string password,
-        UserPreferences preferences)
+    public static ErrorOr<Success> ValidateCreateUserRequest(string name, string email, string password)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Length > 100)
         {
@@ -25,12 +24,7 @@ public class UserValidator
             return UserErrors.InvalidPassword;
         }
 
-        if ((preferences.Language != Language.Bs && preferences.Language != Language.En) || 
-            (preferences.Currency != Currency.BAM && preferences.Currency != Currency.USD))
-        {
-            return UserErrors.InvalidPreferences;
-        } 
-        
+       
         return Result.Success; 
     }
 

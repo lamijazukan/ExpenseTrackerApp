@@ -14,10 +14,4 @@ public class User
     public DateTime UpdatedAt { get; set; }
     public UserPreferences Preferences { get; set; }
     
-    // Navigation properties
-    /*public ICollection<Category> Categories { get; set; } = new List<Category>();
-    public ICollection<Budget> Budgets { get; set; } = new List<Budget>();
-    public ICollection<Receipt> Receipts { get; set; } = new List<Receipt>();
-    public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
-    public ICollection<Notification> Notifications { get; set; } = new List<Notification>();*/
 }

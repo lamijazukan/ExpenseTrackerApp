@@ -4,10 +4,12 @@ using ExpenseTrackerApp.Application.Users.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.Users;
 using AutoMapper;
 using ExpenseTrackerApp.Domain.ValueObjects;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace ExpenseTrackerApp.WebApi.Controllers.Users;
 
+[Authorize]
 [ApiController]
 [ApiVersion("1.0")]
 [Route("api/v{version:apiVersion}/[controller]")]
@@ -45,29 +47,6 @@ public class UsersController : ApiControllerBase
 
         return result.Match(
             user => Ok(_mapper.Map<GetUsersResponse>(user)),
-            Problem);
-    }
-
-    [HttpPost]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> CreateUser(
-        [FromBody] CreateUserRequest request,
-        CancellationToken cancellationToken)
-    {
-        var domainPreferences = _mapper.Map<UserPreferences>(request.Preferences);
-        var result = await _userService.CreateUserAsync(
-            request.Username,
-            request.Email,
-            request.Password,
-            domainPreferences,
-            cancellationToken);
-
-        return result.Match(
-            user => CreatedAtAction(
-                nameof(GetUserById),
-                new { userId = user.UserId },
-                _mapper.Map<UserResponse>(user)),
             Problem);
     }
 

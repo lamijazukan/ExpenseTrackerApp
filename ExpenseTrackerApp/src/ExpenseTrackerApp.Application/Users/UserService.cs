@@ -45,42 +45,6 @@ public class UserService : IUserService
         return _mapper.Map<UserResult>(result.Value);
     }
     
-    public async Task<ErrorOr<UserResult>> CreateUserAsync(string username, string email, string password, UserPreferences preferences, CancellationToken cancellationToken)
-    {
-        var validationResult = UserValidator.ValidateCreateUserRequest(username, email, password, preferences);
-        if (validationResult.IsError)
-        {
-            return validationResult.Errors;
-        }
-        
-        // Check if user with email already exists
-        var existingUser = await _userRepository.GetUserByEmailAsync(email, cancellationToken);
-        if (!existingUser.IsError)
-        {
-            return UserErrors.DuplicateEmail;
-        }
-        
-    
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-        
-        var user = new User
-        {
-            Username = username,
-            Email = email,
-            PasswordHash = passwordHash,
-            Preferences = preferences,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-        
-      
-        var createResult = await _userRepository.CreateUserAsync(user, cancellationToken);
-        if (createResult.IsError)
-            return createResult.Errors;
-        
-        return _mapper.Map<UserResult>(createResult.Value);
-    }
-
     public async Task<ErrorOr<UserResult>> UpdateUserAsync(Guid userId, string? username, string? password,
         UserPreferences? preferences, CancellationToken cancellationToken)
     {

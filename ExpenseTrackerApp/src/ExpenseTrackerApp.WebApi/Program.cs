@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text;
+using System.Text.Json.Serialization;
 using ExpenseTrackerApp.Application;
 using ExpenseTrackerApp.Infrastructure.Database;
 using ExpenseTrackerApp.WebApi;
@@ -6,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Asp.Versioning;
 using ExpenseTrackerApp.WebApi.Mappings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -38,8 +41,6 @@ var builder = WebApplication.CreateBuilder(args);
             );
         });
     
-    builder.Services.AddControllers();
-    
     builder.Services.AddRouting(options => 
     {
         options.LowercaseUrls = true;
@@ -69,13 +70,41 @@ var builder = WebApplication.CreateBuilder(args);
         {
             Title = "Expense Tracker API",
             Version = "v1",
-            Description = "A RESTful API for managing expenses, users, and categories in an expense tracking application.",
+            Description =
+                "A RESTful API for managing expenses, users, and categories in an expense tracking application.",
             Contact = new Microsoft.OpenApi.Models.OpenApiContact
             {
                 Name = "API Support",
                 Email = "support@expensetracker.com"
             }
+        });;
+        c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            Description = "Enter JWT token like: Bearer {your token}"
         });
+
+        c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+            {
+                {
+                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                    {
+                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                        {
+                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] {}
+                }
+            });
+          
+        
+        
         
         // Include XML comments
         var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -99,6 +128,24 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services
         .AddApplication(builder.Configuration)
         .AddInfrastructure(builder.Configuration);
+    
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            };
+        });
+
+    builder.Services.AddAuthorization();
 }
 /*AUTOMAPPER REGISTRATIONS*/
 
@@ -153,7 +200,13 @@ var app = builder.Build();
         c.ShowExtensions();
     });
     
+    app.UseAuthentication();
+    app.UseAuthorization();
+    
     app.MapControllers();
+    
+    
+
 }
 
 // Start the application

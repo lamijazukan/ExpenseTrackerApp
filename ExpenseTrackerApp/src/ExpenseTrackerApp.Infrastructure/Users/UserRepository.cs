@@ -129,4 +129,16 @@ public  class UserRepository : IUserRepository
         return ex.InnerException is PostgresException pg
             && pg.SqlState == PostgresErrorCodes.UniqueViolation;
     }
+    
+    public async Task<ErrorOr<bool>> EmailExistsAsync(string email, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            return Error.Failure("Database.Error", ex.Message);
+        }
+    }
 }

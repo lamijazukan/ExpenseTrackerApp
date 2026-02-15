@@ -1,6 +1,6 @@
 # ExpenseTrackerApp
 
-A full-stack budget/expense tracking application built with .NET(C#) and React Vite. For detail API documentation access [ExpenseTrackerApp/docs/API_DOCS.md](ExpenseTrackerApp/docs/API_DOCS.md)
+A full-stack budget/expense tracking application built with .NET(C#) and React Vite. For detail API documentation access [ExpenseTrackerApp/docs/API_DOCS.md](ExpenseTrackerApp/docs/API_DOCS.md). Link to frontend repository [https://github.com/lamijazukan/ExpenseTrackerAppUI](https://github.com/lamijazukan/ExpenseTrackerAppUI).
 
 
 ### Prerequisites

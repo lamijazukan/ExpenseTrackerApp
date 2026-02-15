@@ -146,6 +146,20 @@ var builder = WebApplication.CreateBuilder(args);
         });
 
     builder.Services.AddAuthorization();
+    
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("frontend",
+            policy =>
+            {
+                policy
+                    .WithOrigins("http://localhost:5173")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+    });
+
 }
 /*AUTOMAPPER REGISTRATIONS*/
 
@@ -155,6 +169,7 @@ builder.Services.AddAutoMapper(typeof(BudgetProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(TransactionProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(ExpenseProfile).Assembly);
 builder.Services.AddAutoMapper(typeof(StatisticsProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(UserProfileSettings).Assembly);
 
 Log.Logger.Information("Application starting");
 
@@ -199,6 +214,10 @@ var app = builder.Build();
         c.EnableFilter();
         c.ShowExtensions();
     });
+
+
+    app.UseHttpsRedirection();
+    app.UseCors("frontend");
     
     app.UseAuthentication();
     app.UseAuthorization();

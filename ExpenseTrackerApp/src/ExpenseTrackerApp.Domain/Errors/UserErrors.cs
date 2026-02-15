@@ -19,6 +19,4 @@ public class UserErrors
     public static Error InvalidPassword =>
         Error.Validation($"{nameof(UserErrors)}.{nameof(InvalidPassword)}", "Password is required and must be at least 8 characters long.");
     
-    public static Error InvalidPreferences => 
-        Error.Validation($"{nameof(UserErrors)}.{nameof(InvalidPreferences)}", "The preferences are invalid. Valid languages are: en and bs. Valid currencies are: BAM and USD");
 }

@@ -1,5 +1,4 @@
 
-using ExpenseTrackerApp.Domain.ValueObjects;
 
 namespace ExpenseTrackerApp.Domain.Entities;
 
@@ -12,6 +11,5 @@ public class User
     public DateTime CreatedAt { get; set; }
     
     public DateTime UpdatedAt { get; set; }
-    public UserPreferences Preferences { get; set; }
     
 }

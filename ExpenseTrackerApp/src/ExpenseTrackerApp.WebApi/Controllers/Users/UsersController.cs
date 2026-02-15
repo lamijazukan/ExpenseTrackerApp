@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ExpenseTrackerApp.Application.Users.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.Users;
 using AutoMapper;
-using ExpenseTrackerApp.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
 
 
@@ -58,12 +57,10 @@ public class UsersController : ApiControllerBase
         [FromRoute] Guid userId,  
         [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        var domainPreferences = _mapper.Map<UserPreferences>(request.Preferences);
         var result = await _userService.UpdateUserAsync(
             userId,
             request.Username,
             request.Password,
-            domainPreferences,
             cancellationToken);
         
         return result.Match(

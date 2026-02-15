@@ -10,6 +10,5 @@ public class CreateUserRequest
         
         public string Password { get; set; } = string.Empty;
         
-       public UserPreferencesObject Preferences { get; set; }
   
 }

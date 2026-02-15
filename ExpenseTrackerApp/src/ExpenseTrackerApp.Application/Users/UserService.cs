@@ -5,7 +5,7 @@ using ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Domain.Entities;
 using ExpenseTrackerApp.Domain.Errors;
 using ErrorOr;
-using ExpenseTrackerApp.Domain.ValueObjects;
+
 
 namespace ExpenseTrackerApp.Application.Users;
 
@@ -45,11 +45,10 @@ public class UserService : IUserService
         return _mapper.Map<UserResult>(result.Value);
     }
     
-    public async Task<ErrorOr<UserResult>> UpdateUserAsync(Guid userId, string? username, string? password,
-        UserPreferences? preferences, CancellationToken cancellationToken)
+    public async Task<ErrorOr<UserResult>> UpdateUserAsync(Guid userId, string? username, string? password, CancellationToken cancellationToken)
     {
         var validationResult =
-            UserValidator.ValidateUpdateUserRequest(username, password, preferences);
+            UserValidator.ValidateUpdateUserRequest(username, password);
 
         if (validationResult.IsError)
         {
@@ -76,10 +75,6 @@ public class UserService : IUserService
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
         }
 
-        if (preferences is not null)
-        {
-            user.Preferences = preferences;
-        }
         user.UpdatedAt = DateTime.UtcNow;
         
         var updateResult = await _userRepository.UpdateUserAsync(user, cancellationToken);

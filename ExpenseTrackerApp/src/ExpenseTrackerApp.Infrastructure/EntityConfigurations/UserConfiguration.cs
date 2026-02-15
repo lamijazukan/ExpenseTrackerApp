@@ -40,16 +40,6 @@ namespace ExpenseTrackerApp.Infrastructure.EntityConfigurations
             builder.Property(u => u.UpdatedAt)
                 .HasDefaultValueSql("NOW()");
 
-            builder.OwnsOne(u => u.Preferences, prefs =>
-            {
-                prefs.ToJson();
-
-                prefs.Property(p => p.Language)
-                    .HasConversion<string>();
-
-                prefs.Property(p => p.Currency)
-                    .HasConversion<string>();
-            });
         }
     }
 }

@@ -7,6 +7,7 @@ using ExpenseTrackerApp.Application.Categories;
 using ExpenseTrackerApp.Application.Expenses;
 using ExpenseTrackerApp.Application.Statistics;
 using ExpenseTrackerApp.Application.Transactions;
+using ExpenseTrackerApp.Application.UserProfiles;
 using ExpenseTrackerApp.Infrastructure.Authentication;
 using ExpenseTrackerApp.Infrastructure.Budgets;
 using ExpenseTrackerApp.Infrastructure.Categories;
@@ -15,6 +16,7 @@ using ExpenseTrackerApp.Infrastructure.Database;
 using ExpenseTrackerApp.Infrastructure.DomainEventDispatcher;
 using ExpenseTrackerApp.Infrastructure.Expenses;
 using ExpenseTrackerApp.Infrastructure.Transactions;
+using ExpenseTrackerApp.Infrastructure.UserProfiles;
 
 
 namespace ExpenseTrackerApp.WebApi;
@@ -32,7 +34,8 @@ public static class DependencyInjection
             .AddTransactionsApplication()
             .AddExpensesApplication()
             .AddStatisticsApplication()
-            .AddAuthenticationApplication();
+            .AddAuthenticationApplication()
+            .AddUserProfilesApplication();
 
     }
     
@@ -49,7 +52,8 @@ public static class DependencyInjection
             .AddTransactionInfrastructure(configuration)
             .AddExpensesInfrastructure(configuration)
             .AddDomainEventsInfrastructure(configuration)
-            .AddJwtGeneratorInfrastructure(configuration);
+            .AddJwtGeneratorInfrastructure(configuration)
+            .AddUserProfilesInfrastructure(configuration);
          
         
     }

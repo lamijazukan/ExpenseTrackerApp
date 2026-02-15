@@ -1,7 +1,6 @@
 using ErrorOr;
-using ExpenseTrackerApp.Domain.Enums;
 using ExpenseTrackerApp.Domain.Errors;
-using ExpenseTrackerApp.Domain.ValueObjects;
+
 
 namespace ExpenseTrackerApp.Application.Users;
 
@@ -30,8 +29,7 @@ public class UserValidator
 
     public static ErrorOr<Success> ValidateUpdateUserRequest(
         string? username,
-        string? password,
-        UserPreferences? preferences)
+        string? password)
     {
         if (username is not null)
         {
@@ -49,14 +47,7 @@ public class UserValidator
             }
         }
 
-        if (preferences is not null)
-        {
-            if ((preferences.Language != Language.Bs && preferences.Language != Language.En) ||
-                (preferences.Currency != Currency.BAM && preferences.Currency != Currency.USD))
-            {
-                return UserErrors.InvalidPreferences;
-            }
-        }
+   
 
         return Result.Success;
     }

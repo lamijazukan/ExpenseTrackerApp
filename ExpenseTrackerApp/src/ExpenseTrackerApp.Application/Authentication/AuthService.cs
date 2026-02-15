@@ -2,9 +2,11 @@ using ErrorOr;
 using ExpenseTrackerApp.Application.Authentication.Data;
 using ExpenseTrackerApp.Application.Authentication.Interfaces.Application;
 using ExpenseTrackerApp.Application.Authentication.Interfaces.Infrastructure;
+using ExpenseTrackerApp.Application.UserProfiles.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Application.Users;
 using ExpenseTrackerApp.Application.Users.Interfaces.Infrastructure;
 using ExpenseTrackerApp.Domain.Entities;
+using ExpenseTrackerApp.Domain.Enums;
 using ExpenseTrackerApp.Domain.Errors;
 
 
@@ -13,14 +15,17 @@ namespace ExpenseTrackerApp.Application.Authentication;
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IUserProfileRepository _profileRepository;
     private readonly IJwtTokenGenerator _jwtGenerator;
    
 
     public AuthService(
         IUserRepository userRepository,
+        IUserProfileRepository profileRepository,
         IJwtTokenGenerator jwtGenerator)
     {
         _userRepository = userRepository;
+        _profileRepository = profileRepository;
         _jwtGenerator = jwtGenerator;
        
     }
@@ -52,6 +57,20 @@ public class AuthService : IAuthService
         var createResult = await _userRepository.CreateUserAsync(user, cancellationToken);
         if (createResult.IsError)
             return createResult.Errors;
+        
+        
+        var profile = new UserProfile
+        {
+            UserId = user.UserId,
+            Language = Language.Bs,
+            Currency = Currency.BAM,
+            AvatarUrl = null
+        };
+
+        var profileResult = await _profileRepository.CreateProfileAsync(profile, cancellationToken);
+        if (profileResult.IsError)
+            return profileResult.Errors;
+
 
         var token = _jwtGenerator.GenerateToken(user);
 

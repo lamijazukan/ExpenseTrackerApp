@@ -16,6 +16,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<Expense> Expenses { get; set; }
     
     public DbSet<Transaction> Transactions { get; set; }
+    
+    public DbSet<UserProfile> UserProfiles { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

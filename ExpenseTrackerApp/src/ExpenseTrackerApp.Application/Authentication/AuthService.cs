@@ -37,6 +37,9 @@ public class AuthService : IAuthService
         CancellationToken cancellationToken)
     {
         var validate = UserValidator.ValidateCreateUserRequest(username, email, password);
+        if (validate.IsError)
+            return validate.Errors;
+
         var existsResult = await _userRepository.EmailExistsAsync(email, cancellationToken);
         if (existsResult.IsError)
             return existsResult.Errors;

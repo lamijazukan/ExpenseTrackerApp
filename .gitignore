@@ -458,3 +458,6 @@ $RECYCLE.BIN/
 
 .env
 /.idea/.idea.ExpenseTrackerApp/.idea/vcs.xml
+
+# Local per-developer secrets - never commit (real values live only on disk / user-secrets)
+appsettings.[Dd]evelopment.json

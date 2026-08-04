@@ -1,0 +1,11 @@
+services:
+  webapi:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    build: !reset null
+    volumes:
+      - ../../:/app
+    working_dir: /app/ExpenseTrackerApp/src/ExpenseTrackerApp.WebApi
+    command: dotnet watch run --no-launch-profile
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=true
+      - ASPNETCORE_ENVIRONMENT=Development

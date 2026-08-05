@@ -1,6 +1,9 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+# Claude Code local session state
+/claudeCodeEditorTabs.xml
+/jsonSchemas.xml
 # Rider ignored files
 /modules.xml
 /.idea.ExpenseTrackerApp.iml

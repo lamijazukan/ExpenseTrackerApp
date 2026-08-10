@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using AutoMapper;
 using ExpenseTrackerApp.Application.Authentication.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.Authentication;

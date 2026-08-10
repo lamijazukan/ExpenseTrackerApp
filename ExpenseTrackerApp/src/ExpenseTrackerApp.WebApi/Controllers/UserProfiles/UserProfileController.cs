@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Asp.Versioning;
 using AutoMapper;
 using ExpenseTrackerApp.Application.UserProfiles.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.UserProfiles;

@@ -2,8 +2,8 @@
 
 # Specify docker registry, and base and runtime images
 ARG BASE_REGISTRY="mcr.microsoft.com"
-ARG BUILD_IMAGE="dotnet/sdk:8.0"
-ARG RUNTIME_IMAGE="dotnet/aspnet:8.0"
+ARG BUILD_IMAGE="dotnet/sdk:10.0"
+ARG RUNTIME_IMAGE="dotnet/aspnet:10.0"
 
 # Specify which user runs the build container (default root)
 ARG BUILD_CHOWN="root:root"

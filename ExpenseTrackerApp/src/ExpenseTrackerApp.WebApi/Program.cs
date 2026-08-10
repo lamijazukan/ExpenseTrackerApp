@@ -6,6 +6,7 @@ using ExpenseTrackerApp.WebApi;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Asp.Versioning;
+using Microsoft.OpenApi;
 using ExpenseTrackerApp.WebApi.Mappings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -66,42 +67,36 @@ var builder = WebApplication.CreateBuilder(args);
     
     builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+        c.SwaggerDoc("v1", new OpenApiInfo
         {
             Title = "Expense Tracker API",
             Version = "v1",
             Description =
                 "A RESTful API for managing expenses, users, and categories in an expense tracking application.",
-            Contact = new Microsoft.OpenApi.Models.OpenApiContact
+            Contact = new OpenApiContact
             {
                 Name = "API Support",
                 Email = "support@expensetracker.com"
             }
-        });;
-        c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        });
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
             Name = "Authorization",
-            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Type = SecuritySchemeType.Http,
             Scheme = "bearer",
             BearerFormat = "JWT",
-            In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+            In = ParameterLocation.Header,
             Description = "Enter JWT token like: Bearer {your token}"
         });
 
-        c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+        c.AddSecurityRequirement(document =>
+        {
+            var schemeReference = new OpenApiSecuritySchemeReference("Bearer", document);
+            return new OpenApiSecurityRequirement
             {
-                {
-                    new Microsoft.OpenApi.Models.OpenApiSecurityScheme
-                    {
-                        Reference = new Microsoft.OpenApi.Models.OpenApiReference
-                        {
-                            Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[] {}
-                }
-            });
+                [schemeReference] = []
+            };
+        });
           
         
         
@@ -163,13 +158,13 @@ var builder = WebApplication.CreateBuilder(args);
 }
 /*AUTOMAPPER REGISTRATIONS*/
 
-builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(CategoryProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(BudgetProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(TransactionProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(ExpenseProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(StatisticsProfile).Assembly);
-builder.Services.AddAutoMapper(typeof(UserProfileSettings).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(UserProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(CategoryProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(BudgetProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(TransactionProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(ExpenseProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(StatisticsProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(UserProfileSettings).Assembly);
 
 Log.Logger.Information("Application starting");
 

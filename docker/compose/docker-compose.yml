@@ -1,4 +1,4 @@
-﻿
+
 services:
   webapi:
     build:
@@ -10,7 +10,4 @@ services:
       - "8080:8080"
     environment:
       Database__ConnectionString: "${CONNECTION_STRING}"
-      
-
-
-
+      Jwt__Key: "${JWT_KEY}"

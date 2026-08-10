@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using AutoMapper;
 using ExpenseTrackerApp.Application.Statistics.Interfaces.Application;
 using ExpenseTrackerApp.Contracts.Statistics;
